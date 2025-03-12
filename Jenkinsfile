@@ -4,20 +4,24 @@ pipeline {
     environment {
         DOCKER_DEV_IMAGE = "arunkandhaswamy/dev-react-app"
         DOCKER_PROD_IMAGE = "arunkandhaswamy/prod-react-app"
-        DOCKER_CREDENTIALS = "docker-hub-credentials"  
+        DOCKER_CREDENTIALS = "docker-hub-credentials"
         EC2_USER = "ubuntu"
         EC2_IP = "3.110.221.225"
-        SSH_CREDENTIALS = "aws-ssh-key"  
+        SSH_CREDENTIALS = "aws-ssh-key"
     }
 
     triggers {
-        githubPush()  
+        githubPush()
     }
 
-    stages {  
+    stages {
         stage('Checkout Code') {
             steps {
                 git branch: 'dev', url: 'https://github.com/Arunkandhaswamy/Project2.git'
+                script {
+                    env.BRANCH_NAME = sh(script: "git rev-parse --abbrev-ref HEAD", returnStdout: true).trim()
+                    echo "Branch Name Set: ${env.BRANCH_NAME}"
+                }
             }
         }
 
@@ -47,16 +51,18 @@ pipeline {
         stage('Push Image to Docker Hub') {
             steps {
                 script {
+                    echo "Branch Name: ${env.BRANCH_NAME}"
+                    sh "docker images"
                     if (env.BRANCH_NAME == 'dev') {
                         echo "Pushing to public dev repository..."
-                        sh 'docker push $DOCKER_DEV_IMAGE:latest'
+                        sh "docker push $DOCKER_DEV_IMAGE:latest"
                     } else if (env.BRANCH_NAME == 'master') {
                         echo "Checking if dev was merged before pushing to prod..."
                         def mergeCheck = sh(script: "git log --oneline -n 1 | grep 'Merge pull request'", returnStatus: true)
-
+                        echo "Merge Check Exit Code: ${mergeCheck}"
                         if (mergeCheck == 0) {
                             echo "Dev branch was merged. Pushing to private prod repository..."
-                            sh 'docker push $DOCKER_PROD_IMAGE:latest'
+                            sh "docker push $DOCKER_PROD_IMAGE:latest"
                         } else {
                             echo "No merge detected. Skipping push to prod."
                         }
@@ -79,7 +85,7 @@ pipeline {
                         echo "Deploying $imageName to EC2..."
                         sh """
                             ssh -o StrictHostKeyChecking=no $EC2_USER@$EC2_IP '
-                            export DOCKER_USER="${DOCKER_USER}" && export DOCKER_PASS="${DOCKER_PASS}" &&
+                            export DOCKER_USER="$DOCKER_USER" && export DOCKER_PASS="$DOCKER_PASS" &&
                             echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin &&
                             docker pull $imageName:latest &&
                             docker stop react-app || true &&
@@ -91,7 +97,7 @@ pipeline {
                 }
             }
         }
-    } // <-- ADDED THIS
+    }
 
     post {
         success { echo 'Deployment Successful!' }
