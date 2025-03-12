@@ -14,12 +14,11 @@ pipeline {
         githubPush()  
     }
 
-    stages {
-        stage('Checkout Code') {
-            steps {
-                git branch: "*/${GIT_BRANCH}", url: 'https://github.com/Arunkandhaswamy/Project2.git'
-            }
-        }
+stage('Checkout Code') {
+    steps {
+        git branch: 'dev', url: 'https://github.com/Arunkandhaswamy/Project2.git'
+    }
+}
 
         stage('Build Docker Image') {
             steps {
