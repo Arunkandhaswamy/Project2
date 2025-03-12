@@ -32,9 +32,9 @@ pipeline {
                     sh './build.sh'
                     
                     if (env.BRANCH_NAME == 'dev') {
-                        sh "docker tag arunkandhaswamy/dev-react-app:latest $DOCKER_DEV_IMAGE:latest"
+                        sh "docker tag devops-build_react-app:latest $DOCKER_DEV_IMAGE:latest"
                     } else if (env.BRANCH_NAME == 'master') {
-                        sh "docker tag arunkandhaswamy/dev-react-app:latest $DOCKER_PROD_IMAGE:latest"
+                        sh "docker tag devops-build_react-app:latest $DOCKER_PROD_IMAGE:latest"
                     }
                 }
             }
