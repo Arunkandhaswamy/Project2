@@ -14,11 +14,12 @@ pipeline {
         githubPush()  
     }
 
-stage('Checkout Code') {
-    steps {
-        git branch: 'dev', url: 'https://github.com/Arunkandhaswamy/Project2.git'
-    }
-}
+    stages {  // <-- ADDED THIS
+        stage('Checkout Code') {
+            steps {
+                git branch: 'dev', url: 'https://github.com/Arunkandhaswamy/Project2.git'
+            }
+        }
 
         stage('Build Docker Image') {
             steps {
@@ -90,11 +91,10 @@ stage('Checkout Code') {
                 }
             }
         }
-    }
+    } // <-- ADDED THIS
 
     post {
         success { echo 'Deployment Successful!' }
         failure { echo 'Deployment Failed. Check Logs!' }
     }
 }
-
