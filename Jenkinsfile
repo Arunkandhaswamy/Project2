@@ -14,7 +14,7 @@ pipeline {
         githubPush()  
     }
 
-    stages {  // <-- ADDED THIS
+    stages {  
         stage('Checkout Code') {
             steps {
                 git branch: 'dev', url: 'https://github.com/Arunkandhaswamy/Project2.git'
