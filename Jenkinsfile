@@ -84,7 +84,6 @@ pipeline {
                         echo "Deploying $imageName to EC2..."
                         sh """
                             ssh -o StrictHostKeyChecking=no $EC2_USER@$EC2_IP '
-                            export DOCKER_USER="$DOCKER_USER" && export DOCKER_PASS="$DOCKER_PASS" &&
                             echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin &&
                             docker pull $imageName:latest &&
                             docker stop react-app || true &&
