@@ -82,6 +82,8 @@ pipeline {
                         def imageName = (env.BRANCH_NAME == 'dev') ? DOCKER_DEV_IMAGE : DOCKER_PROD_IMAGE
                         echo "Deploying $imageName to EC2..."
                         sh """
+                            docker stop react-app || true &&
+                            docker rm react-app || true &&
                             echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin &&
                             docker pull $imageName:latest &&
                            
