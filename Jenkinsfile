@@ -84,10 +84,10 @@ pipeline {
                         sh """
                             echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin &&
                             docker pull $imageName:latest &&
-                            docker stop react-app || true &&
-                            docker rm react-app || true &&
+                           
+                             chmod +x deploy.sh
                             ./deploy.sh
-                            '
+                            
                         """
                     
                 }
