@@ -7,7 +7,6 @@ pipeline {
         DOCKER_CREDENTIALS = "docker-hub-credentials"
         EC2_USER = "ubuntu"
         EC2_IP = "3.110.221.225"
-        SSH_CREDENTIALS = "aws-ssh-key"
     }
 
     triggers {
