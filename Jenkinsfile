@@ -78,12 +78,10 @@ pipeline {
                 }
             }
             steps {
-                sshagent(['aws-ssh-key']) {
-                    script {
+                     script {
                         def imageName = (env.BRANCH_NAME == 'dev') ? DOCKER_DEV_IMAGE : DOCKER_PROD_IMAGE
                         echo "Deploying $imageName to EC2..."
                         sh """
-                            ssh -o StrictHostKeyChecking=no $EC2_USER@$EC2_IP '
                             echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin &&
                             docker pull $imageName:latest &&
                             docker stop react-app || true &&
@@ -91,7 +89,7 @@ pipeline {
                             ./deploy.sh
                             '
                         """
-                    }
+                    
                 }
             }
         }
